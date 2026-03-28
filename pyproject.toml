@@ -1,0 +1,5 @@
+[project]
+name = "anthropic-interview-prep"
+version = "0.1.0"
+description = "Lightweight UV-based harness for interview problem practice."
+requires-python = ">=3.12"
