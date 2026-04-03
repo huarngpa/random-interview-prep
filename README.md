@@ -86,6 +86,25 @@ Reference example:
 - solution: `problems/contains_duplicate.py`
 - test: `tests/test_contains_duplicate.py`
 
+## Level One Practice Set
+
+Starter problems live under:
+
+- `problems/level_one/`
+- `tests/level_one/`
+
+They are intentionally opt-in, so they do not run as part of the default `test_*.py` suite while you are still implementing them.
+
+See:
+
+- `docs/anthropic/level-one-problems.md`
+
+Run one level one practice problem like this:
+
+```bash
+uv run python -m unittest tests.level_one.practice_two_sum -v
+```
+
 ## Notes
 
 - The template test is intentionally skipped until you copy it for a real problem.
