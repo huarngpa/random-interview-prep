@@ -7,6 +7,7 @@ This folder is our working area for Anthropic loop prep.
 - [Python Concepts](./python-concepts.md): the Python topics most likely to matter for fast coding rounds and build-style interview problems.
 - [Algorithm Framework](./algorithm-framework.md): a systematic way to identify which algorithmic pattern is most likely to crack a new medium or hard problem.
 - [Modern Python](./modern-python-for-java.md): a narrative guide to what changed since the 2017-2019 era, especially for someone with a Java/systems background.
+- [Hard Problem Spells](./hard-problem-spells.md): a pattern-compression guide for handling repeated hard problems with staff/principal-level calm and structure.
 - [Level One Problems](./level-one-problems.md): first-pass fluency problems for core interview patterns.
 - [Level Two Problems](./level-two-problems.md): six canonical problems, each representing one major pattern family.
 - [Level Three Problems](./level-three-problems.md): mixed-pattern mediums where recognition gets noisier and implementation pressure rises.
