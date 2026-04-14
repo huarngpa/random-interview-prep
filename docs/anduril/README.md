@@ -5,6 +5,8 @@ This folder now has two purposes:
 1. Document the historical Anduril problem set from the public CSV.
 2. Infer what the next hiring cycle is likely to ask, then turn that into a practical study guide.
 
+There is now also a narrower tech-screen sprint pack at [./grok-tech-screen](./grok-tech-screen), focused specifically on the "two Mediums in 45 minutes" preparation angle.
+
 The historical set matters because it shows the problem families Anduril has favored over time. The prediction track matters because interviews rarely repeat the exact same questions forever. More often, they keep the same taste and change the skin.
 
 ## Source Data
@@ -215,6 +217,15 @@ Once the core patterns feel stable, push into the harder predicted variants:
 - [Swim in Rising Water](./next-cycle-problems/swim-in-rising-water.md)
 - [Cheapest Flights Within K Stops](./next-cycle-problems/cheapest-flights-within-k-stops.md)
 - [Accounts Merge](./next-cycle-problems/accounts-merge.md)
+
+## Tech Screen Sprint Pack
+
+If you want the narrower, tactical prep view for a short HackerRank-style screen, use:
+
+- [Tech Screen Notes](./grok-tech-screen/README.md)
+- [Likely Problem Pool](./grok-tech-screen/likely-problem-pool.md)
+- [45-Minute Screen Strategy](./grok-tech-screen/screen-strategy.md)
+- [48-Hour Study Plan](./grok-tech-screen/study-plan.md)
 
 ## How To Use The Problem Notes
 
