@@ -40,8 +40,12 @@ Not for:
 1. [Likely Problem Pool](./likely-problem-pool.md)
 2. [45-Minute Screen Strategy](./screen-strategy.md)
 3. [48-Hour Study Plan](./study-plan.md)
-4. [Solved Tech Screen Problems](./problems/README.md)
-5. [Role And People Research](./role-and-people-research.md)
+4. [Full Loop Prep Plan](./full-loop-prep-plan.md)
+5. [Solved Tech Screen Problems](./problems/README.md)
+6. [Role And People Research](./role-and-people-research.md)
+7. [External Format Research](./external-format-research.md)
+8. [Round-By-Round Guide](./round-by-round-guide.md)
+9. [Full-Loop Design Pack](./design/README.md)
 
 ## Best First Problems
 
