@@ -154,6 +154,83 @@ So rollback needs:
 - inventory does not match new BOM
 - operators begin new units under old assumptions
 
+## Diagram
+
+```mermaid
+flowchart LR
+    A["Engineering Change Order"] --> B["Validation Service"]
+    B --> C["Readiness Checks"]
+    C --> D["Rollout Service"]
+    D --> E["Applicability Rules"]
+    E --> F["Execution Service"]
+    F --> G["Units / Work Orders Bound To Revision"]
+```
+
+## SQL Sketch
+
+```sql
+create table definition_revision (
+  id uuid primary key,
+  definition_type text not null,
+  product_code text not null,
+  revision_label text not null,
+  status text not null,
+  payload jsonb not null,
+  created_at timestamptz not null default now()
+);
+
+create table applicability_rule (
+  id uuid primary key,
+  revision_id uuid not null references definition_revision(id),
+  site_code text,
+  line_code text,
+  serial_range_start text,
+  serial_range_end text,
+  effective_at timestamptz,
+  readiness_gate text
+);
+
+create table execution_binding (
+  id uuid primary key,
+  entity_type text not null,
+  entity_id uuid not null,
+  revision_id uuid not null references definition_revision(id),
+  bound_at timestamptz not null default now()
+);
+```
+
+## Python Sketch
+
+```python
+from dataclasses import dataclass
+from typing import Any
+
+
+@dataclass
+class ApplicabilityRule:
+    revision_id: str
+    site_code: str | None
+    line_code: str | None
+    effective_at: str | None
+    readiness_gate: str | None
+
+
+class RolloutService:
+    def activate_revision(self, revision_id: str) -> None:
+        self._validate_dependencies(revision_id)
+        self._mark_active(revision_id)
+
+    def resolve_revision_for_unit(self, unit_id: str, site_code: str, line_code: str) -> str:
+        # Select matching active revision and bind it for historical truth.
+        return "revision-id"
+
+    def _validate_dependencies(self, revision_id: str) -> None:
+        pass
+
+    def _mark_active(self, revision_id: str) -> None:
+        pass
+```
+
 ## What Makes This A Strong Answer
 
 You show that you understand:

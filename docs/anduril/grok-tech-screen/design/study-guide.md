@@ -261,6 +261,30 @@ So actions like:
 
 should be idempotent or deduplicated by operation key.
 
+### Prefer SQL By Default For Core Operational Truth
+
+For most of these Anduril-shaped problems, I would default to:
+
+- relational storage for core transactional state
+
+Why:
+
+- workflows are relational
+- audit trails are relational
+- joins across units, work orders, revisions, stations, and quality events are common
+- correctness is usually more important than extreme scale
+
+I would reach for DynamoDB or another key-value store only when:
+
+- the access patterns are extremely simple and stable
+- the object model is naturally document-shaped
+- I need very high write throughput on append-only event or projection data
+
+So if an interviewer asks "SQL or DynamoDB?", a strong default answer is:
+
+- SQL for the system of record
+- maybe key-value or stream-oriented storage for derived views, projections, or very high-volume event ingestion
+
 ## What Anduril Probably Cares About Most
 
 My read from their role descriptions is that they want people who can connect:

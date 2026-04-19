@@ -26,11 +26,12 @@ It is to build the right instincts for answering a design question in this domai
 
 1. [Study Guide](./study-guide.md)
 2. [Manufacturing Crash Course](./manufacturing-crash-course.md)
-3. [MES For Mixed-Model Production](./mes-for-mixed-model-production.md)
-4. [Real-Time Factory Visibility](./real-time-factory-visibility.md)
-5. [Traceability And Genealogy](./traceability-and-genealogy.md)
-6. [Engineering Change Rollout](./engineering-change-rollout.md)
-7. [Quality Hold And Rework Management](./quality-hold-and-rework-management.md)
+3. [Generic Design Translations](./generic-design-translations.md)
+4. [MES For Mixed-Model Production](./mes-for-mixed-model-production.md)
+5. [Real-Time Factory Visibility](./real-time-factory-visibility.md)
+6. [Traceability And Genealogy](./traceability-and-genealogy.md)
+7. [Engineering Change Rollout](./engineering-change-rollout.md)
+8. [Quality Hold And Rework Management](./quality-hold-and-rework-management.md)
 
 ## Best First Three
 

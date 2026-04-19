@@ -167,6 +167,70 @@ I would make the initial hold durable synchronously, then allow some downstream 
 - genealogy is incomplete, leading to under-blocking
 - released unit remains blocked in one downstream system
 
+## Diagram
+
+```mermaid
+flowchart LR
+    A["Test Failure / Suspect Lot"] --> B["Quality Service"]
+    B --> C["Hold Store"]
+    B --> D["Genealogy Query"]
+    D --> E["Impacted Units"]
+    C --> F["Execution API Enforcement"]
+    C --> G["Shipment / Release Enforcement"]
+    B --> H["Disposition Workflow"]
+```
+
+## SQL Sketch
+
+```sql
+create table quality_event (
+  id uuid primary key,
+  entity_type text not null,
+  entity_id uuid not null,
+  event_type text not null,
+  severity text not null,
+  payload jsonb not null,
+  created_at timestamptz not null default now()
+);
+
+create table active_hold (
+  id uuid primary key,
+  entity_type text not null,
+  entity_id uuid not null,
+  reason text not null,
+  status text not null,
+  created_at timestamptz not null default now()
+);
+
+create table disposition_decision (
+  id uuid primary key,
+  hold_id uuid not null references active_hold(id),
+  decision text not null,
+  decided_by text not null,
+  decided_at timestamptz not null default now(),
+  notes text
+);
+```
+
+## Python Sketch
+
+```python
+class QualityService:
+    def place_hold(self, entity_type: str, entity_id: str, reason: str) -> str:
+        # Persist durable hold and emit downstream enforcement event.
+        return "hold-id"
+
+    def release_hold(self, hold_id: str, decided_by: str, notes: str) -> None:
+        # Record explicit release decision for auditability.
+        pass
+
+
+class ExecutionPolicy:
+    def can_advance(self, entity_id: str) -> bool:
+        # Reject station progression if a live hold exists.
+        return False
+```
+
 ## What Makes This A Staff-Level Answer
 
 You are showing:

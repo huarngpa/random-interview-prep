@@ -168,6 +168,79 @@ I would require the authoritative lineage event to be durably recorded as part o
 - lot gets quarantined after downstream consumption
 - upstream system changes revision labels unexpectedly
 
+## Diagram
+
+```mermaid
+flowchart LR
+    A["MES Execution Events"] --> B["Genealogy Service"]
+    B --> C["Lineage Edge Store"]
+    B --> D["Audit Event Log"]
+    C --> E["Ancestry Query API"]
+    C --> F["Where-Used Query API"]
+    D --> G["Blast Radius Projection"]
+    G --> H["Quality / Recall Workflows"]
+```
+
+## SQL Sketch
+
+```sql
+create table traceable_object (
+  id uuid primary key,
+  object_type text not null,
+  external_ref text not null,
+  created_at timestamptz not null default now()
+);
+
+create table lineage_edge (
+  id uuid primary key,
+  parent_object_id uuid not null references traceable_object(id),
+  child_object_id uuid not null references traceable_object(id),
+  edge_type text not null,
+  source_event_id uuid not null,
+  created_at timestamptz not null default now()
+);
+
+create table audit_event (
+  id uuid primary key,
+  object_id uuid not null references traceable_object(id),
+  event_type text not null,
+  payload jsonb not null,
+  created_at timestamptz not null default now()
+);
+```
+
+## Python Sketch
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class LineageEdge:
+    parent_object_id: str
+    child_object_id: str
+    edge_type: str
+    source_event_id: str
+
+
+class GenealogyService:
+    def attach_component(self, unit_id: str, component_id: str, source_event_id: str) -> None:
+        edge = LineageEdge(
+            parent_object_id=unit_id,
+            child_object_id=component_id,
+            edge_type="built_from",
+            source_event_id=source_event_id,
+        )
+        self._write_edge(edge)
+
+    def where_used(self, component_id: str) -> list[str]:
+        # Return all downstream units impacted by this component or lot.
+        return []
+
+    def _write_edge(self, edge: LineageEdge) -> None:
+        pass
+```
+
 ## What Makes This Answer Good
 
 A good answer shows you understand:

@@ -160,6 +160,86 @@ Never pretend stale data is live.
 - event ordering is inconsistent
 - dashboard projections lag behind by several minutes
 
+## Diagram
+
+```mermaid
+flowchart LR
+    A["MES Events"] --> D["Stream / Projection Layer"]
+    B["Station Heartbeats"] --> D
+    C["Quality + Test Events"] --> D
+    D --> E["Station Status View"]
+    D --> F["Line Throughput View"]
+    D --> G["Queue Depth View"]
+    D --> H["Downtime View"]
+    E --> I["Supervisor UI"]
+    F --> I
+    G --> I
+    H --> J["Manufacturing Engineer UI"]
+```
+
+## SQL Sketch
+
+```sql
+create table station_heartbeat (
+  station_id text not null,
+  observed_at timestamptz not null,
+  status text not null,
+  payload jsonb not null,
+  primary key (station_id, observed_at)
+);
+
+create table operational_event (
+  id uuid primary key,
+  source text not null,
+  entity_id text not null,
+  event_type text not null,
+  payload jsonb not null,
+  created_at timestamptz not null default now()
+);
+
+create table station_status_view (
+  station_id text primary key,
+  current_status text not null,
+  blocked_unit_count int not null,
+  last_heartbeat_at timestamptz,
+  updated_at timestamptz not null
+);
+```
+
+## Python Sketch
+
+```python
+from dataclasses import dataclass
+from typing import Any
+
+
+@dataclass
+class StationStatus:
+    station_id: str
+    current_status: str
+    blocked_unit_count: int
+    last_heartbeat_at: str | None
+
+
+class ProjectionBuilder:
+    def handle_event(self, event_type: str, payload: dict[str, Any]) -> None:
+        if event_type == "station_heartbeat":
+            self._update_station_status(payload)
+        elif event_type == "unit_blocked":
+            self._increment_blocked(payload["station_id"])
+        elif event_type == "unit_unblocked":
+            self._decrement_blocked(payload["station_id"])
+
+    def _update_station_status(self, payload: dict[str, Any]) -> None:
+        pass
+
+    def _increment_blocked(self, station_id: str) -> None:
+        pass
+
+    def _decrement_blocked(self, station_id: str) -> None:
+        pass
+```
+
 ## Strong Answer Additions
 
 - anomaly detection later for station drift or queue growth

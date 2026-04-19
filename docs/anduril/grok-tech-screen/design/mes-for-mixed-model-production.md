@@ -277,6 +277,120 @@ Why:
 - network disruption on the floor
 - work order revision changes while units are in flight
 
+## Diagram
+
+```mermaid
+flowchart LR
+    A["Work Definition Service"] --> B["Execution Service"]
+    B --> C["Execution Event Log"]
+    B --> D["Quality Service"]
+    B --> E["Inventory Integration"]
+    C --> F["Projection Builder"]
+    D --> F
+    E --> F
+    F --> G["Operator Station UI"]
+    F --> H["Supervisor Dashboard"]
+    F --> I["Manufacturing Analytics"]
+```
+
+## SQL Sketch
+
+```sql
+create table work_order (
+  id uuid primary key,
+  product_code text not null,
+  routing_revision_id uuid not null,
+  planned_quantity int not null,
+  status text not null,
+  created_at timestamptz not null default now()
+);
+
+create table serialized_unit (
+  id uuid primary key,
+  work_order_id uuid not null references work_order(id),
+  serial_number text unique not null,
+  bound_routing_revision_id uuid not null,
+  current_station_id uuid,
+  current_state text not null,
+  created_at timestamptz not null default now()
+);
+
+create table execution_event (
+  id uuid primary key,
+  unit_id uuid not null references serialized_unit(id),
+  station_id uuid,
+  event_type text not null,
+  operation_key text unique not null,
+  payload jsonb not null,
+  created_by text not null,
+  created_at timestamptz not null default now()
+);
+
+create table hold (
+  id uuid primary key,
+  unit_id uuid not null references serialized_unit(id),
+  reason text not null,
+  status text not null,
+  created_at timestamptz not null default now()
+);
+```
+
+## Python Sketch
+
+```python
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
+
+
+class EventType(str, Enum):
+    ENTER_STATION = "enter_station"
+    COMPLETE_STEP = "complete_step"
+    FAIL_STEP = "fail_step"
+    CONSUME_MATERIAL = "consume_material"
+    PLACE_HOLD = "place_hold"
+
+
+@dataclass
+class ExecutionEvent:
+    unit_id: str
+    event_type: EventType
+    operation_key: str
+    station_id: str | None
+    created_by: str
+    payload: dict[str, Any]
+
+
+class ExecutionService:
+    def enter_station(self, unit_id: str, station_id: str, operator_id: str, operation_key: str) -> None:
+        self._append_event(
+            ExecutionEvent(
+                unit_id=unit_id,
+                event_type=EventType.ENTER_STATION,
+                operation_key=operation_key,
+                station_id=station_id,
+                created_by=operator_id,
+                payload={},
+            )
+        )
+
+    def complete_step(self, unit_id: str, station_id: str, operator_id: str, operation_key: str, measurements: dict[str, Any]) -> None:
+        self._append_event(
+            ExecutionEvent(
+                unit_id=unit_id,
+                event_type=EventType.COMPLETE_STEP,
+                operation_key=operation_key,
+                station_id=station_id,
+                created_by=operator_id,
+                payload={"measurements": measurements},
+            )
+        )
+
+    def _append_event(self, event: ExecutionEvent) -> None:
+        # Persist event and trigger async projections/integrations.
+        pass
+```
+
 ## What I Would Say About Availability
 
 The plant cannot stop because a nice microservice diagram looked elegant.
