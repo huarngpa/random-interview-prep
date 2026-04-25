@@ -10,6 +10,8 @@ It is:
 
 If this domain feels foreign, read [Manufacturing Crash Course](./manufacturing-crash-course.md) first.
 
+If the interview arc feels slippery, read [System Design Arc](./system-design-arc.md) too. That is the practical conversation flow.
+
 ## The Core Mental Shift
 
 Most software domains let you treat the world as mostly digital.
@@ -203,6 +205,31 @@ When a design prompt lands, clarify:
 6. Does the factory need to keep running during rollout or outage?
 
 These questions make you sound grounded instead of generic.
+
+## A Practical Way To Drive The Conversation
+
+The easiest mistake in system design is jumping too fast into tools.
+
+A better rhythm is:
+
+1. understand the workflow
+2. define requirements
+3. name the entities
+4. sketch the high-level pieces
+5. walk the main flows
+6. then bring in concrete stack choices
+
+That is where your actual experience should come in.
+
+For example:
+
+- use SQL if the system of record is relational and join-heavy
+- use OpenSearch for fast search or operational querying, but not as the source of truth
+- use Kinesis if the system is AWS-heavy and you want lower operational overhead
+- use Kafka if ecosystem flexibility or existing org expertise matters more
+- use ECS/Fargate if you want a straightforward service deployment story in AWS
+
+Those choices sound strong when they are tied to requirements, not when they appear too early.
 
 ## The Default Design Moves That Usually Help
 

@@ -111,6 +111,22 @@ That is what allows mixed-revision operation safely.
 5. Execution service reads the correct active revision for each unit at runtime.
 6. All units record which revision they were actually built under.
 
+## How I Would Drive This Conversation
+
+I would start by clarifying:
+
+- what kind of changes we are rolling out
+- whether the change affects in-flight work
+- whether rollout can be staged by site, line, or cohort
+- what rollback means in this environment
+
+Then I would frame it as a control-plane problem:
+
+- version definitions
+- validate readiness
+- apply rollout rules
+- bind execution to explicit versions
+
 ## Important Tradeoffs
 
 ### Hard Cutover Versus Mixed Revision
@@ -230,6 +246,27 @@ class RolloutService:
     def _mark_active(self, revision_id: str) -> None:
         pass
 ```
+
+## Practical Stack Choices
+
+A practical implementation here would likely use:
+
+- SQL for definition versions, rollout plans, applicability rules, and execution bindings
+- ECS/Fargate services for validation and rollout orchestration
+- CDK for deployment and environment consistency
+- eventing to notify downstream systems and refresh cached read models
+
+If this is inside an AWS-heavy stack, I would lean toward:
+
+- Step Functions only if the validation workflow is truly orchestration-heavy
+- otherwise keep the rollout logic inside a normal service to avoid splitting the control flow across too many places
+
+The important part is not the exact AWS product. It is preserving:
+
+- explicit versions
+- rollout status
+- readiness checks
+- historical truth
 
 ## What Makes This A Strong Answer
 

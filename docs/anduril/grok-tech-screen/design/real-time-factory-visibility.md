@@ -63,6 +63,22 @@ The right shape is:
 - what station is down
 - who is blocked and why
 
+## How I Would Drive This Conversation
+
+I would first clarify:
+
+- who needs the dashboard
+- whether they care more about current state or historical investigation
+- how fresh the data really needs to be
+- what actions they need to take off the dashboard
+
+Then I would separate:
+
+- source-of-truth event producers
+- projection builders
+- read APIs
+- live update path to the UI
+
 ## Architecture
 
 ### Event Sources
@@ -239,6 +255,25 @@ class ProjectionBuilder:
     def _decrement_blocked(self, station_id: str) -> None:
         pass
 ```
+
+## Practical Stack Choices
+
+A practical implementation could look like:
+
+- event producers writing into Kinesis or Kafka
+- projection services on ECS/Fargate
+- Postgres or DynamoDB for current-state projections depending on query shape
+- OpenSearch for fast faceted search and operational filtering
+- websockets or SSE from a backend-for-frontend layer to the UI
+
+If this were heavily AWS-centric and I wanted to move quickly, I would probably prefer:
+
+- Kinesis
+- Lambda or Fargate for projection updates
+- Postgres for relational summaries
+- OpenSearch only if search/filter UX becomes important
+
+I would avoid making the dashboard depend directly on raw event tables.
 
 ## Strong Answer Additions
 

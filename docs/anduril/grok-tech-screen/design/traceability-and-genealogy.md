@@ -91,6 +91,17 @@ You can implement this as relational edge tables and event logs rather than need
 - given revision, show which units were built under it
 - given operator or station, show which units were processed there
 
+## How I Would Drive This Conversation
+
+I would start by clarifying:
+
+- what the most important investigation queries are
+- whether we need both forward and backward traceability
+- what the unit of traceability is: lot, serial, subassembly, or all of them
+- whether corrections must preserve original history
+
+Then I would explain that this is fundamentally a lineage problem with audit requirements, which means the write model and query model both matter.
+
 ## Suggested Architecture
 
 ### Execution Integration
@@ -240,6 +251,21 @@ class GenealogyService:
     def _write_edge(self, edge: LineageEdge) -> None:
         pass
 ```
+
+## Practical Stack Choices
+
+For this kind of system, I would default to:
+
+- Postgres or Aurora Postgres for lineage edges and audit events
+- CDC or event streaming into downstream projections
+- OpenSearch for investigator-facing search over serials, lots, operators, and revisions
+
+I would not jump straight to a graph database unless:
+
+- the relationship complexity is clearly overwhelming SQL
+- and the team actually has the operational appetite for it
+
+For an interview answer, "relational source of truth plus indexed edge tables plus search projections" is usually the most grounded answer.
 
 ## What Makes This Answer Good
 

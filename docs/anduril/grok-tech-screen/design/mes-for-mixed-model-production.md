@@ -60,6 +60,117 @@ Reasonable assumption for the rest of the answer:
 - manual and semi-automated stations
 - strong auditability required
 
+## Why These Questions Matter
+
+If you are not from a manufacturing background, these can sound weirdly specific.
+
+The point is not that you should somehow magically know factory jargon.
+
+The point is that each question changes the architecture.
+
+### 1. Are We Designing For One Site Or Many?
+
+What this really means:
+
+- am I building one local system for one factory?
+- or a platform that has to support multiple factories with slightly different workflows, lines, and rollout timing?
+
+Why it matters:
+
+- one site means simpler assumptions
+- many sites means site-aware permissions, configuration, rollout, reporting, and maybe data residency or replication concerns
+
+More human version:
+
+- "One thing that changes the design fast is whether this is one factory or a multi-site platform, because multi-site support usually adds config and rollout complexity."
+
+### 2. Do Units Move Strictly Linearly, Or Can Steps Branch And Rework?
+
+What this really means:
+
+- is the workflow basically a straight line?
+- or can a unit fail, loop backward, skip ahead, or go into special handling?
+
+Why it matters:
+
+- linear flow can be modeled simply
+- branching and rework usually pushes you toward an explicit workflow or state-machine model
+
+More human version:
+
+- "I want to understand how simple or messy the workflow is, because a straight-through process is very different from one with lots of rework and exception handling."
+
+### 3. Are Stations Manual, Automated, Or Both?
+
+What this really means:
+
+- are humans clicking through steps?
+- are machines reporting completion automatically?
+- or do I need to support both?
+
+Why it matters:
+
+- manual stations care more about UX and operator guidance
+- automated stations care more about machine integration, idempotency, and connectivity
+- mixed environments are common and usually harder
+
+More human version:
+
+- "Another thing I’d want to clarify is how much of the workflow is human-driven versus machine-driven, because that changes both the integration model and the user experience."
+
+### 4. Do We Need Real-Time Dashboards In Scope, Or Just Execution?
+
+What this really means:
+
+- am I only designing the system that records and controls execution?
+- or am I also designing the visibility layer for supervisors and engineers?
+
+Why it matters:
+
+- execution alone is one problem
+- execution plus real-time visibility adds projections, live updates, and dashboard-specific read paths
+
+More human version:
+
+- "I want to separate the core execution path from the reporting and visibility path, so I’d clarify whether live dashboards are in scope or whether we’re focused just on the execution system."
+
+### 5. How Important Is Genealogy And Material Traceability In This Version?
+
+What this really means:
+
+- do we just need to know that a step completed?
+- or do we need to know exactly which component lot, serial, operator, and test result touched this unit?
+
+Why it matters:
+
+- if traceability matters, the write model and storage design get more rigorous
+- if it matters less, you can start with a simpler workflow system
+
+More human version:
+
+- "I’d also want to know how strict the traceability requirements are, because that changes whether I’m building a simple workflow tracker or a much more audit-heavy execution system."
+
+## The Bigger Lesson
+
+A good clarifying question is really just:
+
+- "what answer would meaningfully change my design?"
+
+That is all you are trying to do.
+
+## How I Would Drive This Conversation
+
+I would not open with "I’ll use service X and database Y."
+
+I would open with:
+
+- who is using the system?
+- what is the unit moving through the workflow?
+- what has to be true before a unit can advance?
+- what must be captured for audit and traceability?
+
+Then I would name the entities, sketch the workflow, and only after that start making concrete implementation choices.
+
 ## Main Entities
 
 - `ProductDefinition`
@@ -390,6 +501,25 @@ class ExecutionService:
         # Persist event and trigger async projections/integrations.
         pass
 ```
+
+## Practical Stack Choices
+
+If I were grounding this in a pragmatic AWS-style implementation, I would probably start with:
+
+- a React or Next.js frontend for operator and supervisor workflows
+- backend services on ECS/Fargate
+- CDK for infrastructure
+- Postgres or Aurora Postgres for the system of record
+- SQS or Kinesis for async integration paths depending on whether I want simple queues or event streaming
+
+I would not start with DynamoDB as the primary store here because the workflow, revisioning, holds, and execution history are naturally relational.
+
+I might add OpenSearch later for:
+
+- fast unit lookup
+- searching by serial, station, operator, or hold reason
+
+but I would keep the authoritative truth in SQL.
 
 ## What I Would Say About Availability
 
