@@ -151,6 +151,10 @@ Prepare at least six stories:
 - balanced speed vs quality
 - handled operational pain or production issues
 
+Best source docs now:
+
+- [Behavioral Focus](../current-loop/behavioral/README.md)
+
 ### 4. Coding Sharpness
 
 Goal:

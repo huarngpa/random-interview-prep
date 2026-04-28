@@ -13,6 +13,7 @@ The rest of `docs/anduril` still exists, but this folder is the answer to:
 1. [What Matters Now](./what-matters-now.md)
 2. [Coding Priority](./coding-priority.md)
 3. [Design Priority](./design-priority.md)
+4. [Behavioral Focus](./behavioral/README.md)
 
 Then jump into the detailed source docs linked from each one.
 

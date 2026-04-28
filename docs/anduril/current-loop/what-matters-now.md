@@ -60,6 +60,17 @@ Why:
 
 - the bigger risk now is likely coding sharpness, not behavioral performance
 
+### 5. Behavioral Stories, But In A Tight Way
+
+Read:
+
+- [Behavioral Focus](./behavioral/README.md)
+
+Why:
+
+- you probably do not need huge behavioral prep
+- but you do want a clean story pack for the two non-coding rounds
+
 ## Medium Priority
 
 - [Role And People Research](../grok-tech-screen/role-and-people-research.md)
